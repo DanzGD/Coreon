@@ -1,24 +1,7 @@
-# ================= AnarchyCore =================
-# Default dibuat se-vanilla mungkin. Ubah lalu jalankan /anarchycore reload
-
 hide-join-quit: false
-
-commands:
-  stats: true
-  top: true
-  discord: true
-  balance: true
-  pay: true
-  baltop: true
-  sell: true
-  bounty: true
-  eco: true
-  anarchycore: true
-
+currency-symbol: "$"
 stats-refresh-minutes: 5
 discord-link: "https://discord.gg/contoh"
-currency-symbol: "$"
-
 discord:
   enabled: false
   webhook-url: ""
@@ -37,23 +20,52 @@ discord:
 
 combat:
   enabled: true
-  seconds: 20
+  seconds: 25
   punish-logout: true
   disable-elytra: true
-  blocked-commands: [spawn, home, tpa, tpaccept, tpahere, warp, rtp, back, kit]
+  blocked-commands: [spawn, home, tpa, tpaccept, tpahere, warp, rtp, back, kit, vault, enderchest]
+  block-teleport: true
+  block-flight: true
+
+rtp:
+  min-radius: 1000
+  max-radius: 10000
+  cooldown-seconds: 300
 
 bounty:
   enabled: true
   per-kill: 500
-  claim-percent: 0.5
+  claim-percent: 0.65
   max: 1000000
-  same-victim-cooldown-minutes: 10
+  same-victim-cooldown-minutes: 5
   min-add: 100
 
-lag-guard:
-  item-clean-minutes: 0
-  item-min-age-minutes: 10
-  announce: true
+anticheat:
+  xray:
+    enabled: true
+    min-ores: 25
+    alert-threshold: 5
+  freecam:
+    enabled: true
+    max-normal-y-move: 6.0
+  alerts-to-admins: true
+  auto-punish: false
+
+vault:
+  rows: 6
+
+market:
+  auto-price:
+    enabled: true
+    depth: 64
+  half-life-hours: 6
+  min-multiplier: 0.2
+  trend-amplitude: 0.12
+  trend-period-hours: 24
+  enchant-bonus-per-level: 0.08
+  enchant-bonus-cap: 1.5
+  min-durability-factor: 0.05
+  default-depth: 32
 
 tiers:
   COMMON:
@@ -72,23 +84,13 @@ tiers:
     price: 4000
     depth: 12
     items: [ELYTRA, ENCHANTED_GOLDEN_APPLE, NETHER_STAR, DRAGON_EGG, BEACON, DRAGON_HEAD]
-
 overrides:
   NETHERITE_INGOT: 1200
   ENCHANTED_GOLDEN_APPLE: 2400
   DRAGON_HEAD: 3000
   BEACON: 4800
   DRAGON_EGG: 10000
-
-market:
-  auto-price:
-    enabled: true
-    depth: 64
-  half-life-hours: 6
-  min-multiplier: 0.2
-  trend-amplitude: 0.12
-  trend-period-hours: 24
-  enchant-bonus-per-level: 0.08
-  enchant-bonus-cap: 1.5
-  min-durability-factor: 0.05
-  default-depth: 32
+lag-guard:
+  item-clean-minutes: 0
+  item-min-age-minutes: 10
+  announce: true
