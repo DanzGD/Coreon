@@ -5,19 +5,16 @@ discord-link: "https://discord.gg/contoh"
 discord:
   enabled: false
   webhook-url: ""
-  bot-token: ""
-  channel-id: ""
-  poll-seconds: 3
-  server-name: "Server Anarki"
-  avatar-url: "https://mc-heads.net/avatar/{uuid}/128"
-  to-game-format: "[Discord] {name}: {message}"
+  server-name: "AnarchyCore Server"
+  avatar-url: ""
+  footer: "AnarchyCore Discord"
+  embed-color: 5793266
   events:
     chat: true
     join-quit: true
     death: true
     advancement: false
     server-status: true
-
 combat:
   enabled: true
   seconds: 25
@@ -26,12 +23,10 @@ combat:
   blocked-commands: [spawn, home, tpa, tpaccept, tpahere, warp, rtp, back, kit, vault, enderchest]
   block-teleport: true
   block-flight: true
-
 rtp:
   min-radius: 1000
   max-radius: 10000
   cooldown-seconds: 300
-
 bounty:
   enabled: true
   per-kill: 500
@@ -39,7 +34,6 @@ bounty:
   max: 1000000
   same-victim-cooldown-minutes: 5
   min-add: 100
-
 anticheat:
   xray:
     enabled: true
@@ -50,10 +44,8 @@ anticheat:
     max-normal-y-move: 6.0
   alerts-to-admins: true
   auto-punish: false
-
 vault:
   rows: 6
-
 market:
   auto-price:
     enabled: true
@@ -66,7 +58,6 @@ market:
   enchant-bonus-cap: 1.5
   min-durability-factor: 0.05
   default-depth: 32
-
 tiers:
   COMMON:
     price: 30
