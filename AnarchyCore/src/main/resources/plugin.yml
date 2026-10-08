@@ -25,7 +25,7 @@ commands:
     usage: /baltop
   sell:
     description: Sell items
-    usage: /sell [hand|all|price|list]
+    usage: /sell [gui|hand|all|price|list]
   market:
     description: Supply and demand market information
     usage: /market
