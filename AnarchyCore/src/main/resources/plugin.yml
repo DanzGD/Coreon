@@ -1,0 +1,47 @@
+name: AnarchyCore
+version: 2.1.0
+main: id.anarchy.core.AnarchyCore
+api-version: "26.3"
+description: Plugin ringan untuk server anarki (jembatan Discord, saldo dollar, jual item, statistik)
+commands:
+  stats:
+    description: Lihat statistik pemain
+    usage: /stats [pemain]
+  top:
+    description: Leaderboard kill
+    usage: /top
+  discord:
+    description: Link Discord server
+    usage: /discord
+  balance:
+    description: Lihat saldo dollar
+    usage: /balance
+    aliases: [bal, money]
+  pay:
+    description: Kirim dollar ke pemain online
+    usage: /pay <pemain> <jumlah>
+  baltop:
+    description: Leaderboard saldo
+    usage: /baltop
+  sell:
+    description: Jual item langka dengan harga dinamis
+    usage: /sell [hand|all|price|list]
+  bounty:
+    description: Lihat/taruh bounty, atau top bounty
+    usage: /bounty [pemain|top|add <pemain> <jumlah>]
+  eco:
+    description: Atur saldo pemain (admin)
+    usage: /eco <give|take|set> <pemain> <jumlah>
+    permission: anarchycore.admin
+  anarchycore:
+    description: Perintah admin AnarchyCore
+    usage: /anarchycore reload
+    aliases: [acore]
+    permission: anarchycore.admin
+permissions:
+  anarchycore.combat.bypass:
+    description: Kebal dari combat tag dan hukuman combat logging
+    default: false
+  anarchycore.admin:
+    description: Akses command admin AnarchyCore
+    default: op
