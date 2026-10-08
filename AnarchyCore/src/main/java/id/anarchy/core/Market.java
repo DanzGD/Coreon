@@ -69,7 +69,7 @@ public class Market {
         if(raw==49){e.setCancelled(true);finishSellGui(p,h,top);return;}
         if(raw==53){e.setCancelled(true);p.closeInventory();return;}
         if(e.isShiftClick()&&e.getClickedInventory()==e.getView().getBottomInventory()){e.setCancelled(true);ItemStack s=e.getCurrentItem();if(s!=null&&!s.getType().isAir()&&addToSellGui(top,s.clone()))e.getClickedInventory().setItem(e.getSlot(),null);return;}
-        if(raw>=45)e.setCancelled(true);
+        if(e.getClickedInventory()==top)e.setCancelled(true);
     }
     @org.bukkit.event.EventHandler public void onSellDrag(org.bukkit.event.inventory.InventoryDragEvent e){if(e.getView().getTopInventory().getHolder() instanceof SellHolder)for(int slot:e.getRawSlots())if(slot<45){e.setCancelled(true);return;}}
     @org.bukkit.event.EventHandler public void onSellClose(org.bukkit.event.inventory.InventoryCloseEvent e){if(!(e.getPlayer() instanceof Player p)||!(e.getInventory().getHolder() instanceof SellHolder h)||h.completed())return;returnGuiItems(p,e.getInventory());}
