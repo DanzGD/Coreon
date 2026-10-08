@@ -1,47 +1,56 @@
 name: AnarchyCore
-version: 2.1.0
+version: 2.2.0
 main: id.anarchy.core.AnarchyCore
 api-version: "26.3"
-description: Plugin ringan untuk server anarki (jembatan Discord, saldo dollar, jual item, statistik)
+description: Anarchy survival core with economy, bounty, RTP, vault, combat protection, supply-demand and server-side security
 commands:
   stats:
-    description: Lihat statistik pemain
-    usage: /stats [pemain]
+    description: Player statistics
+    usage: /stats [player]
   top:
-    description: Leaderboard kill
+    description: Kill leaderboard
     usage: /top
   discord:
-    description: Link Discord server
+    description: Discord link
     usage: /discord
   balance:
-    description: Lihat saldo dollar
+    description: View balance
     usage: /balance
     aliases: [bal, money]
   pay:
-    description: Kirim dollar ke pemain online
-    usage: /pay <pemain> <jumlah>
+    description: Pay another player
+    usage: /pay <player> <amount>
   baltop:
-    description: Leaderboard saldo
+    description: Balance leaderboard
     usage: /baltop
   sell:
-    description: Jual item langka dengan harga dinamis
+    description: Sell items
     usage: /sell [hand|all|price|list]
+  market:
+    description: Supply and demand market information
+    usage: /market
   bounty:
-    description: Lihat/taruh bounty, atau top bounty
-    usage: /bounty [pemain|top|add <pemain> <jumlah>]
+    description: Bounty system
+    usage: /bounty [player|top|add <player> <amount>]
+  rtp:
+    description: Random teleport
+    usage: /rtp
+  vault:
+    description: Private item vault
+    usage: /vault
   eco:
-    description: Atur saldo pemain (admin)
-    usage: /eco <give|take|set> <pemain> <jumlah>
+    description: Admin economy control
+    usage: /eco <give|take|set> <player> <amount>
     permission: anarchycore.admin
   anarchycore:
-    description: Perintah admin AnarchyCore
+    description: AnarchyCore admin command
     usage: /anarchycore reload
     aliases: [acore]
     permission: anarchycore.admin
 permissions:
   anarchycore.combat.bypass:
-    description: Kebal dari combat tag dan hukuman combat logging
+    description: Bypass combat restrictions
     default: false
   anarchycore.admin:
-    description: Akses command admin AnarchyCore
+    description: AnarchyCore admin access
     default: op
