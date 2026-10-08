@@ -48,7 +48,38 @@ public class Market {
     private double quote(ItemStack s,long now){Tier t=tiers.get(s.getType());if(t==null)return 0;int n=s.getAmount();double r=Math.exp(-1/t.depth()),sum=Math.exp(-sat(s.getType(),now)/t.depth())*(1-Math.pow(r,n))/(1-r);return t.price()*trend(s.getType(),now)*factor(s)*Math.max(sum,n*minMult);}
     private void apply(ItemStack s,long now){st.market.put(s.getType(),new double[]{sat(s.getType(),now)+s.getAmount(),now});st.dirty();}
     private double demand(Material m,long now){Tier t=tiers.get(m);return Math.max(minMult,Math.exp(-sat(m,now)/t.depth()));}
-    void sell(Player p,String[] a){String s=a.length==0?"hand":a[0].toLowerCase(Locale.ROOT);switch(s){case"hand"->sellHand(p);case"all"->sellAll(p);case"price"->price(p);case"list"->list(p);default->say(p,"Gunakan: /sell [hand|all|price|list]",NamedTextColor.RED);}}
+    void sell(Player p,String[] a){String s=a.length==0?"gui":a[0].toLowerCase(Locale.ROOT);switch(s){case"gui"->openSellGui(p);case"hand"->sellHand(p);case"all"->sellAll(p);case"price"->price(p);case"list"->list(p);default->say(p,"Gunakan: /sell [gui|hand|all|price|list]",NamedTextColor.RED);}}
+    private static final class SellHolder implements org.bukkit.inventory.InventoryHolder{
+        private org.bukkit.inventory.Inventory inventory; private boolean completed;
+        void setInventory(org.bukkit.inventory.Inventory inventory){this.inventory=inventory;}
+        public org.bukkit.inventory.Inventory getInventory(){return inventory;}
+        void complete(){completed=true;} boolean completed(){return completed;}
+    }
+    private void openSellGui(Player p){
+        SellHolder h=new SellHolder();org.bukkit.inventory.Inventory inv=Bukkit.createInventory(h,54,Component.text("Sell Items",NamedTextColor.GREEN));h.setInventory(inv);
+        for(int i=45;i<54;i++)inv.setItem(i,button(Material.GRAY_STAINED_GLASS_PANE," "));
+        inv.setItem(49,button(Material.EMERALD_BLOCK,"SELL ITEMS","Klik untuk menjual item di GUI."));
+        inv.setItem(53,button(Material.REDSTONE_BLOCK,"CANCEL","Tutup tanpa menjual."));
+        p.openInventory(inv);
+    }
+    private ItemStack button(Material m,String name,String... lore){ItemStack x=new ItemStack(m);ItemMeta meta=x.getItemMeta();meta.displayName(Component.text(name,NamedTextColor.WHITE));if(lore.length>0)meta.lore(Arrays.stream(lore).map(v->Component.text(v,NamedTextColor.GRAY)).toList());x.setItemMeta(meta);return x;}
+    @org.bukkit.event.EventHandler public void onSellClick(org.bukkit.event.inventory.InventoryClickEvent e){
+        if(!(e.getWhoClicked() instanceof Player p))return;org.bukkit.inventory.Inventory top=e.getView().getTopInventory();if(!(top.getHolder() instanceof SellHolder h))return;int raw=e.getRawSlot();
+        if(raw>=0&&raw<45)return;
+        if(raw==49){e.setCancelled(true);finishSellGui(p,h,top);return;}
+        if(raw==53){e.setCancelled(true);p.closeInventory();return;}
+        if(e.isShiftClick()&&e.getClickedInventory()==e.getView().getBottomInventory()){e.setCancelled(true);ItemStack s=e.getCurrentItem();if(s!=null&&!s.getType().isAir()&&addToSellGui(top,s.clone()))e.getClickedInventory().setItem(e.getSlot(),null);return;}
+        if(raw>=45)e.setCancelled(true);
+    }
+    @org.bukkit.event.EventHandler public void onSellDrag(org.bukkit.event.inventory.InventoryDragEvent e){if(e.getView().getTopInventory().getHolder() instanceof SellHolder)for(int slot:e.getRawSlots())if(slot<45){e.setCancelled(true);return;}}
+    @org.bukkit.event.EventHandler public void onSellClose(org.bukkit.event.inventory.InventoryCloseEvent e){if(!(e.getPlayer() instanceof Player p)||!(e.getInventory().getHolder() instanceof SellHolder h)||h.completed())return;returnGuiItems(p,e.getInventory());}
+    private boolean addToSellGui(org.bukkit.inventory.Inventory inv,ItemStack s){for(int i=0;i<45;i++)if(inv.getItem(i)==null||inv.getItem(i).getType().isAir()){inv.setItem(i,s);return true;}return false;}
+    private void finishSellGui(Player p,SellHolder h,org.bukkit.inventory.Inventory inv){
+        long now=System.currentTimeMillis();double total=0;int count=0;
+        for(int i=0;i<45;i++){ItemStack s=inv.getItem(i);if(s==null||s.getType().isAir())continue;if(!tiers.containsKey(s.getType()))continue;total+=quote(s,now);count+=s.getAmount();apply(s,now);inv.setItem(i,null);}
+        if(count==0){say(p,"Tidak ada item yang bisa dijual.",NamedTextColor.RED);return;}h.complete();settle(p,total,count);p.closeInventory();
+    }
+    private void returnGuiItems(Player p,org.bukkit.inventory.Inventory inv){for(int i=0;i<45;i++){ItemStack s=inv.getItem(i);if(s==null||s.getType().isAir())continue;Map<Integer,ItemStack> left=p.getInventory().addItem(s);for(ItemStack x:left.values())p.getWorld().dropItemNaturally(p.getLocation(),x);inv.setItem(i,null);}}
     private void sellHand(Player p){ItemStack s=p.getInventory().getItemInMainHand();if(s.getType().isAir()||!tiers.containsKey(s.getType())){say(p,"Item ini tidak bisa dijual. Lihat /sell list.",NamedTextColor.RED);return;}long n=System.currentTimeMillis();double v=quote(s,n);int count=s.getAmount();apply(s,n);p.getInventory().setItemInMainHand(null);settle(p,v,count);}
     private void sellAll(Player p){long n=System.currentTimeMillis();var inv=p.getInventory();var c=inv.getStorageContents();double total=0;int count=0;for(int i=0;i<c.length;i++){ItemStack s=c[i];if(s==null||!tiers.containsKey(s.getType()))continue;total+=quote(s,n);apply(s,n);count+=s.getAmount();c[i]=null;}if(count==0){say(p,"Tidak ada item yang bisa dijual di inventory.",NamedTextColor.RED);return;}inv.setStorageContents(c);settle(p,total,count);}
     private void settle(Player p,double value,int count){long cents=Math.round(value*100),total=st.money.merge(p.getUniqueId(),cents,Long::sum);st.dirty();say(p,"Terjual "+count+" item, dapat "+fmt(cents)+". Saldo: "+fmt(total)+".",NamedTextColor.GREEN);}
